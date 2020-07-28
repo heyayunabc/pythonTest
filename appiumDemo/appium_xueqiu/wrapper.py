@@ -1,7 +1,12 @@
+import logging
+
+import allure
 from selenium.webdriver.common.by import By
 
 
 def handle_black(func):
+    logging.basicConfig(level=logging.INFO)
+
     def wrapper(*args, **kwargs):
         _black_list = [
             (By.XPATH, "//*[@resource-id='com.xueqiu.android:id/action_search']"),
@@ -15,6 +20,7 @@ def handle_black(func):
         instance: BasePage = args[0]
 
         try:
+            logging.info("run " + func.__name__ + '\n args: \n' + repr(args[1:]) + "\n" + repr(kwargs))
             element = func(*args, **kwargs)
             _error_num = 0
             # 隐式等待恢复原来的等待
@@ -22,6 +28,12 @@ def handle_black(func):
             return element
         except Exception as e:
             # 出现异常，将隐式等待设置小一点，快速的处理弹窗
+            instance.screenshot("tmp.png")
+            with open("tmp.png", "rb") as f:
+                content = f.read()
+            allure.attach(content, attachment_type=allure.attachment_type.PNG)
+            logging.error("element not found, handle black list")
+            instance._driver.get_screenshot_as_png()
             instance._driver.implicitly_wait(1)
             # 判断异常处理次数
             if _error_num > _max_num:

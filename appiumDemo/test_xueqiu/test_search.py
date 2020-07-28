@@ -1,3 +1,6 @@
+import pytest
+import yaml
+
 from appiumDemo.appium_xueqiu.app import App
 
 
@@ -5,6 +8,10 @@ class TestSearch():
     def setup(self):
         self.search = App().start().main().goto_market().goto_search()
 
-    def test_search(self):
-        self.search.search("阿里巴巴")
-        assert self.search.is_choose("阿里巴巴")
+    @pytest.mark.parametrize("name", yaml.safe_load(open("../test_xueqiu/test_search.yaml", encoding="utf-8")))
+    def test_search(self, name):
+        self.search.search(name)
+        if self.search.is_choose(name):
+            self.search.reset(name)
+        self.search.add(name)
+        assert self.search.is_choose(name)

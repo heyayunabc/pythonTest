@@ -6,7 +6,7 @@ from appiumDemo.appium_xueqiu.main import Main
 class App(BasePage):
     def start(self):
         if self._driver == None:
-            caps = dict()
+            caps = {}
             caps["platformName"] = "android"
             caps["deviceName"] = "127.0.0.1:7555"
             caps["appPackage"] = "com.xueqiu.android"
