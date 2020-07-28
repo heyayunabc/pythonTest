@@ -1,6 +1,6 @@
 import pytest
 import allure
-from python.calc import Calc
+from pythonDemo.calc import Calc
 
 
 class TestCalc:
